@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雅思小作文練習</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f0e8; --surface:#fdfaf4; --surface2:#f0ead8;
+  --border:#d4c9a8; --border2:#c2b48a;
+  --text:#2c2416; --text2:#6b5c3e; --text3:#9a8566;
+  --accent:#1a6b3a; --accent-light:#e8f4ed;
+  --accent2:#c4520a; --accent2-light:#fef0e6;
+  --accent3:#5b3ea8; --accent3-light:#ede8f8;
+  --accent4:#0a6b8a; --accent4-light:#e6f4f8;
+  --correct:#1a6b3a; --wrong:#c4190a;
+  --shadow:0 2px 8px rgba(44,36,22,.08);
+  --shadow-lg:0 4px 20px rgba(44,36,22,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Serif TC',serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:60px;}
+
+/* ── MAIN TABS ── */
+.main-tabs-bar{background:var(--surface);border-bottom:2px solid var(--border2);padding:14px 18px 0;position:sticky;top:0;z-index:200;box-shadow:var(--shadow);}
+.main-header-row{display:flex;align-items:flex-end;gap:10px;margin-bottom:8px;}
+.main-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--accent);}
+.main-tabs-row{display:flex;}
+.main-tab-btn{padding:9px 20px;font-family:'Noto Serif TC',serif;font-size:13px;cursor:pointer;border:none;background:none;color:var(--text3);border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;font-weight:600;}
+.main-tab-btn.active{color:var(--accent);border-bottom:3px solid var(--accent);}
+
+/* ── PAGE TOGGLE ── */
+.section-page{display:none;}
+.section-page.active{display:block;}
+
+/* ══════════════════════ S1 STYLES ══════════════════════ */
+.s1-sub-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 14px;display:flex;gap:0;overflow-x:auto;}
+.s1-tab{padding:7px 13px;font-family:'Noto Serif TC',serif;font-size:12px;cursor:pointer;border:none;background:none;color:var(--text3);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.s1-tab.active{color:var(--accent);border-bottom:2px solid var(--accent);font-weight:600;}
+.stats-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:5px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.stat{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:3px;}
+.stat strong{color:var(--text);font-size:13px;}
+.stat.c strong{color:var(--correct);}
+.stat.w strong{color:var(--wrong);}
+.toolbar{background:var(--surface2);border-bottom:1px solid var(--border);padding:7px 12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.tlabel{font-size:11px;color:var(--text3);white-space:nowrap;}
+.btn{padding:4px 10px;font-size:12px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;font-family:'Noto Serif TC',serif;}
+.btn:hover{background:var(--border);}
+.btn.pri{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn.pri:hover{background:#155a2f;}
+.btn.danger{border-color:#e0a090;color:var(--wrong);}
+.btn.danger:hover{background:#fde8e4;}
+.btn.on{background:var(--text);color:var(--bg);border-color:var(--text);}
+.mdbtn{padding:4px 8px;font-size:11px;border-radius:4px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s;font-family:'Noto Serif TC',serif;}
+.mdbtn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+.sw{position:relative;flex:1;min-width:120px;max-width:200px;}
+.sw input{width:100%;padding:4px 9px 4px 24px;border:1px solid var(--border2);border-radius:4px;font-size:12px;background:var(--surface);font-family:'Noto Serif TC',serif;}
+.si{position:absolute;left:6px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;}
+.cat-hd{padding:11px 14px 3px;display:flex;align-items:center;gap:7px;}
+.cat-name{font-family:'Fraunces',serif;font-size:15px;font-weight:700;}
+.cat-ct{font-size:11px;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:1px 7px;}
+.card{margin:0 10px 6px;background:var(--surface);border:1px solid var(--border);border-radius:7px;overflow:hidden;box-shadow:var(--shadow);}
+.card.ck{border-left:3px solid var(--accent);opacity:.75;}
+.card-top{display:flex;padding:8px 10px;gap:8px;}
+.card-cb{display:flex;align-items:flex-start;padding-top:2px;}
+.card-cb input{width:14px;height:14px;accent-color:var(--accent);cursor:pointer;}
+.card-body{flex:1;display:flex;flex-direction:column;gap:5px;}
+.cmeta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.cnum{font-size:11px;color:var(--text3);font-style:italic;min-width:18px;}
+.tag{font-size:10px;padding:1px 6px;border-radius:20px;font-weight:600;}
+.tag-up{background:var(--accent-light);color:var(--accent);}
+.tag-dn{background:var(--accent2-light);color:var(--accent2);}
+.tag-st{background:var(--accent3-light);color:var(--accent3);}
+.tag-wv{background:var(--accent4-light);color:var(--accent4);}
+.tag-cp{background:#f8e6f4;color:#8a3a6b;}
+.tag-ti{background:#f0f4e6;color:#5a7a1a;}
+.tag-no{background:#f4f0e0;color:#7a5a1a;}
+.tag-cn{background:#e6eff8;color:#3a5a7a;}
+.scn{font-size:13.5px;color:var(--text);line-height:1.6;font-weight:600;}
+.sen{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--accent);line-height:1.5;font-style:italic;}
+.inpwrap{display:flex;gap:5px;align-items:flex-start;}
+.ainp{flex:1;padding:6px 8px;border:1.5px solid var(--border2);border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;background:var(--bg);color:var(--text);resize:none;min-height:32px;transition:border-color .15s;line-height:1.5;}
+.ainp:focus{outline:none;border-color:var(--accent);background:var(--surface);}
+.ainp.cbg{border-color:var(--correct);background:#edfaf3;color:var(--correct);}
+.ainp.wbg{border-color:var(--wrong);background:#fef2f1;color:var(--wrong);}
+.rbadge{font-size:13px;padding-top:6px;flex-shrink:0;}
+.reveal{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--correct);font-style:italic;padding:3px 7px;background:var(--accent-light);border-radius:4px;border-left:2px solid var(--accent);margin-top:2px;display:none;}
+.reveal.show{display:block;}
+.note-area{border-top:1px dashed var(--border);padding:5px 10px 8px;display:none;}
+.note-area.open{display:block;}
+.note-inp{width:100%;padding:5px 7px;border:1px solid var(--border);border-radius:4px;font-family:'Noto Serif TC',serif;font-size:12px;background:#fffdf7;resize:none;min-height:38px;color:var(--text2);}
+.note-inp:focus{outline:none;border-color:var(--accent3);}
+.empty{text-align:center;padding:50px 20px;color:var(--text3);font-size:14px;}
+.pbar{height:3px;background:var(--border);}
+.pbfill{height:100%;background:var(--accent);transition:width .3s;width:0%;}
+
+/* ══════════════════════ S2 STYLES ══════════════════════ */
+.s2-stats-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:5px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;}
+.s2-pbar{height:3px;background:var(--border);}
+.s2-pfill{height:100%;background:var(--accent4);transition:width .3s;width:0%;}
+.s2-toolbar{background:var(--surface2);border-bottom:1px solid var(--border);padding:7px 12px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.s2-fbtn{padding:3px 9px;font-size:11px;border-radius:3px;border:1px solid var(--border);background:transparent;cursor:pointer;color:var(--text2);font-family:'Noto Serif TC',serif;transition:all .15s;}
+.s2-fbtn.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+.s2-wrap{max-width:760px;margin:0 auto;padding:14px 10px;}
+.s2-intro{background:linear-gradient(135deg,#f0f8f3 0%,#e8f0fb 100%);border:1px solid #c0d8c8;border-radius:9px;padding:12px 16px;margin-bottom:14px;}
+.s2-intro h3{font-family:'Fraunces',serif;font-size:15px;color:var(--accent);margin-bottom:3px;}
+.s2-intro p{font-size:12px;color:var(--text2);line-height:1.6;}
+.exblock{background:var(--surface);border:1px solid var(--border);border-radius:9px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);}
+.exhd{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 13px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.exbadge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px;}
+.bv{background:#e8f4ed;color:#1a6b3a;}
+.br{background:#fef0e6;color:#c4520a;}
+.bg{background:#ede8f8;color:#5b3ea8;}
+.bt{background:#e6f4f8;color:#0a6b8a;}
+.bp{background:#f8e6f4;color:#8a3a6b;}
+.extitle{font-size:13px;font-weight:700;color:var(--text);}
+.exsub{font-size:11px;color:var(--text3);margin-left:auto;font-style:italic;}
+.exbody{padding:11px 13px;display:flex;flex-direction:column;gap:9px;}
+.tipbox{background:#fffdf0;border:1px solid #e6d88a;border-radius:6px;padding:7px 11px;font-size:12px;color:#6b5a00;line-height:1.6;}
+.tipbox strong{color:#4a3d00;}
+.qi{border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.qi-top{padding:8px 10px;background:var(--bg);}
+.qprompt{font-size:13px;color:var(--text);line-height:1.7;}
+.qprompt .hl{font-family:'DM Mono',monospace;font-size:12px;background:#fff3cd;border:1px solid #ffe08a;border-radius:3px;padding:1px 4px;color:#7a5200;}
+.qi-inp{padding:6px 10px 9px;background:var(--surface);}
+.qinp{width:100%;padding:7px 9px;border:1.5px solid var(--border2);border-radius:5px;font-family:'DM Mono',monospace;font-size:12.5px;background:var(--bg);color:var(--text);resize:none;min-height:36px;transition:border-color .15s;line-height:1.6;}
+.qinp:focus{outline:none;border-color:var(--accent);background:var(--surface);}
+.qinp.cbg{border-color:var(--correct);background:#edfaf3;color:var(--correct);}
+.qinp.wbg{border-color:var(--wrong);background:#fef2f1;color:var(--wrong);}
+.qfb{display:none;padding:6px 10px;border-top:1px dashed var(--border);font-size:12px;line-height:1.6;}
+.qfb.show{display:block;}
+.qfb.okfb{background:#edfaf3;color:var(--correct);}
+.qfb.nofb{background:#fef2f1;}
+.fba{font-family:'DM Mono',monospace;color:var(--accent);font-style:italic;}
+</style>
+</head>
+<body>
+
+<!-- ══ MAIN TAB BAR ══ -->
+<div class="main-tabs-bar">
+  <div class="main-header-row">
+    <div class="main-title">📊 雅思小作文練習</div>
+  </div>
+  <div class="main-tabs-row">
+    <button class="main-tab-btn active" onclick="switchMain('s1')">✍️ 表達句型練習</button>
+    <button class="main-tab-btn" onclick="switchMain('s2')">💡 寫作反饋練習</button>
+  </div>
+</div>
+
+<!-- ══ SECTION 1 ══ -->
+<div id="main-s1" class="section-page active">
+  <div class="s1-sub-bar" id="s1tabs"></div>
+  <div class="stats-bar">
+    <span class="stat">已完成 <strong id="s1d">0</strong>/<strong id="s1t">0</strong></span>
+    <span class="stat c">✓ 正確 <strong id="s1c">0</strong></span>
+    <span class="stat w">✗ 錯誤 <strong id="s1w">0</strong></span>
+  </div>
+  <div class="pbar"><div class="pbfill" id="s1pb"></div></div>
+  <div class="toolbar">
+    <div class="sw"><span class="si">🔍</span><input type="text" id="s1q" placeholder="搜尋..."></div>
+    <button class="btn pri" onclick="s1Grade()">✓ 批改</button>
+    <button class="btn danger" onclick="s1Clear()">清除</button>
+    <button class="btn" onclick="s1ResetCk()">重置勾選</button>
+    <button class="btn" id="s1nt" onclick="s1ToggleNote()">📌 筆記</button>
+    <span class="tlabel">模式：</span>
+    <button class="mdbtn active" data-m="read" onclick="s1SetMode('read')">📖 閱讀</button>
+    <button class="mdbtn" data-m="cn2en" onclick="s1SetMode('cn2en')">👁 看中文填英文</button>
+    <button class="mdbtn" data-m="en2cn" onclick="s1SetMode('en2cn')">👁 看英文填中文</button>
+    <button class="mdbtn" data-m="fill" onclick="s1SetMode('fill')">✏️ 全填</button>
+    <span class="tlabel">篩選：</span>
+    <button class="btn on" data-f="all" onclick="s1SetF(this,'all')">全部</button>
+    <button class="btn" data-f="checked" onclick="s1SetF(this,'checked')">已勾選</button>
+    <button class="btn" data-f="unchecked" onclick="s1SetF(this,'unchecked')">未勾選</button>
+  </div>
+  <div id="s1ct"></div>
+</div>
+
+<!-- ══ SECTION 2 ══ -->
+<div id="main-s2" class="section-page">
+  <div class="s2-stats-bar">
+    <span class="stat">題目 <strong id="s2t">0</strong></span>
+    <span class="stat c">✓ 答對 <strong id="s2c">0</strong></span>
+    <span class="stat w">✗ 答錯 <strong id="s2w">0</strong></span>
+  </div>
+  <div class="s2-pbar"><div class="s2-pfill" id="s2pb"></div></div>
+  <div class="s2-toolbar">
+    <button class="btn pri" onclick="s2Grade()">✓ 全部批改</button>
+    <button class="btn danger" onclick="s2Clear()">清除</button>
+    <span class="tlabel" style="margin-left:4px;">篩選：</span>
+    <button class="s2-fbtn active" data-f="all" onclick="s2SetF(this,'all')">全部</button>
+    <button class="s2-fbtn" data-f="vocab" onclick="s2SetF(this,'vocab')">📚 詞彙</button>
+    <button class="s2-fbtn" data-f="paraphrase" onclick="s2SetF(this,'paraphrase')">🔄 同義替換</button>
+    <button class="s2-fbtn" data-f="grammar" onclick="s2SetF(this,'grammar')">📐 語法結構</button>
+    <button class="s2-fbtn" data-f="transform" onclick="s2SetF(this,'transform')">⇌ 句型轉換</button>
+    <button class="s2-fbtn" data-f="rewrite" onclick="s2SetF(this,'rewrite')">✏️ 句子改寫</button>
+  </div>
+  <div class="s2-wrap" id="s2ct"></div>
+</div>
+
+<script>
+// ═══════════ SHARED ═══════════
+function norm(s){return String(s).toLowerCase().replace(/[^\w\u4e00-\u9fff]/g,'').trim();}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function switchMain(id){
+  ['s1','s2'].forEach(k=>{
+    document.getElementById('main-'+k).classList.toggle('active',k===id);
+  });
+  document.querySelectorAll('.main-tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',(i===0&&id==='s1')||(i===1&&id==='s2'));
+  });
+}
+
+// ═══════════════════════════════════════════════
+// SECTION 1 DATA
+// ═══════════════════════════════════════════════
+const D1=[
+  {id:1,cat:'up',cl:'上升類動詞',sub:'動詞',cn:'（句子）上升了5%（動詞形式）',en:"The country's GDP increased by 5%.",t:['tag-up']},
+  {id:2,cat:'up',cl:'上升類動詞',sub:'名詞加 of',cn:'（句子）在某期間上升了30%（名詞+of形式）',en:'There was an increase of 30% during the period.',t:['tag-up']},
+  {id:3,cat:'up',cl:'上升類動詞',sub:'名詞在句首',cn:'增長了約4%（名詞做主語）',en:'The growth was significant during the period (around 4%).',t:['tag-up']},
+  {id:4,cat:'up',cl:'上升類動詞',sub:'"see" 用法',cn:'1990年代某事物大幅下降（用saw表達）',en:'The 1990s saw a dramatic decrease in the sales of videos.',t:['tag-up']},
+  {id:5,cat:'up',cl:'上升類動詞',sub:'up/down',cn:'某數值比去年上升40%（使用up）',en:'The consumption of meat reached 45 thousand kilograms, up 40% from a year ago.',t:['tag-up']},
+  {id:6,cat:'up',cl:'上升類動詞',sub:'現在分詞在句中',cn:'已婚人數從1.6百萬上升至1.7百萬（rising to）',en:'The number of married people was 1.6 million, rising to 1.7 million in 1999.',t:['tag-up']},
+  {id:7,cat:'up',cl:'上升類動詞',sub:'"showing" 分詞',cn:'2000年犯罪率15%，比1995年的10%增加5%（showing）',en:'The crime rate in 2000 was 15% compared to 10% in 1995, showing an increase of 5%.',t:['tag-up']},
+  {id:8,cat:'up',cl:'上升類動詞',sub:'詞組',cn:'年輕女生的吸煙率在上升中',en:'The smoking rate in young girls was on the rise.',t:['tag-up']},
+  {id:9,cat:'up',cl:'上升類動詞',sub:'趨勢',cn:'銷售呈現上升趨勢',en:'There was an upward trend in sales.',t:['tag-up']},
+  {id:10,cat:'down',cl:'下降類動詞',sub:'動詞',cn:'零售價格下降了5%至9%（動詞形式）',en:'This retail prices declined by between 5% and 9%.',t:['tag-dn']},
+  {id:11,cat:'down',cl:'下降類動詞',sub:'名詞加 of',cn:'汽車擁有量下降了20%（名詞+of形式）',en:'There was a decline of 20% in car ownership.',t:['tag-dn']},
+  {id:12,cat:'down',cl:'下降類動詞',sub:'名詞在句首',cn:'下降了約3%（decline做主語）',en:'The decline was dramatic in this country (about 3%).',t:['tag-dn']},
+  {id:13,cat:'down',cl:'下降類動詞',sub:'"see" 用法',cn:'英國1990年代書本銷售大幅下跌（saw a steep drop）',en:'Britain saw a steep drop in the sales of books in the 1990s.',t:['tag-dn']},
+  {id:14,cat:'down',cl:'下降類動詞',sub:'up/down',cn:'交易量下跌至每日三百萬，下降35%（使用down）',en:'The trading volume dropped to 3 million a day, down 35%.',t:['tag-dn']},
+  {id:15,cat:'down',cl:'下降類動詞',sub:'現在分詞在句中',cn:'1990年失業率9%，1995年下降至6%（dropping to）',en:'The unemployment rate was 9% in 1990, dropping to 6% in 1995.',t:['tag-dn']},
+  {id:16,cat:'down',cl:'下降類動詞',sub:'"showing" 分詞',cn:'遊客人數300萬，比去年減少14%（showing a decrease of）',en:"The number of tourists was 3 million, showing a decrease of 14% compared with previous year's figures.",t:['tag-dn']},
+  {id:17,cat:'down',cl:'下降類動詞',sub:'詞組',cn:'摩托車傷亡人數在下降中（in decline）',en:'Motorcycle casualties were in decline.',t:['tag-dn']},
+  {id:18,cat:'down',cl:'下降類動詞',sub:'趨勢',cn:'下降趨勢在這段期間非常顯著',en:'The downward trend was significant during the period.',t:['tag-dn']},
+  {id:19,cat:'up',cl:'程度：動詞',sub:'程度激烈（上升）',cn:'程度激烈的上升動詞（六個）',en:'spiral, soar, rocket, surge, shoot up, leap',t:['tag-up']},
+  {id:20,cat:'down',cl:'程度：動詞',sub:'程度激烈（下降）',cn:'程度激烈的下降動詞（六個）',en:'plumb, plunge, plummet, nosedive, tumble, slump',t:['tag-dn']},
+  {id:21,cat:'up',cl:'程度副詞',sub:'低程度',cn:'低程度副詞（四個）',en:'slightly, modestly, moderately, marginally',t:['tag-up','tag-dn']},
+  {id:22,cat:'up',cl:'程度副詞',sub:'顯著',cn:'顯著程度副詞（七個）',en:'considerably, remarkably, notably, noticeably, markedly, substantially, significantly',t:['tag-up','tag-dn']},
+  {id:23,cat:'up',cl:'程度副詞',sub:'極為顯著',cn:'極為顯著程度副詞（三個）',en:'dramatically, radically, exponentially',t:['tag-up','tag-dn']},
+  {id:24,cat:'stable',cl:'平穩表達',sub:'到達平台',cn:'到達平台（三種說法）',en:'reach a plateau / level off / level out',t:['tag-st']},
+  {id:25,cat:'stable',cl:'平穩例句',sub:'通貨膨脹',cn:'通貨膨脹趨於平穩，約2%',en:'Inflation levelled off at around 2%.',t:['tag-st']},
+  {id:26,cat:'stable',cl:'平穩例句',sub:'LCD電視',cn:'LCD電視價格連續三年保持穩定',en:'LCD TV prices remained steady for three years in a row.',t:['tag-st']},
+  {id:27,cat:'wave',cl:'波動表達',sub:'波動',cn:'波動（三個同義詞）',en:'fluctuate / oscillate / vary',t:['tag-wv']},
+  {id:28,cat:'wave',cl:'波動例句',sub:'物價波動',cn:'物價在五年期間劇烈波動',en:'Prices fluctuated wildly during the five-year period.',t:['tag-wv']},
+  {id:29,cat:'noun',cl:'讀數據的方法',sub:'up to / as much as',cn:'購物者人數大幅下跌（多達23%）',en:'The number of shoppers plunged by up to 23 per cent.',t:['tag-no']},
+  {id:30,cat:'noun',cl:'讀數據的方法',sub:'a mere 僅僅',cn:'網路經濟佔該國GDP僅1%',en:"The web economy represents a mere 1% of the country's GDP.",t:['tag-no']},
+  {id:31,cat:'noun',cl:'讀數據的方法',sub:'top/exceed 超過',cn:'2006年出口超過了100億美元',en:'Exports topped (or exceeded) $10 billion in 2006.',t:['tag-no']},
+  {id:32,cat:'noun',cl:'讀數據的方法',sub:'a total of 總數',cn:'公共交通共花費了9億美元',en:'A total of $900 million was spent on public transport.',t:['tag-no']},
+  {id:33,cat:'noun',cl:'讀數據的方法',sub:'ranging from 在……範圍',cn:'價格波動，從20美元到40美元之間',en:'The price was volatile, ranging from $20 to $40.',t:['tag-no']},
+  {id:34,cat:'noun',cl:'讀數據的方法',sub:'respectively 分別地',cn:'動物放牧和清除樹木分別佔土地退化的25%和40%',en:"Animal grazing and tree clearance constituted 25 per cent and 40 per cent of the world's land degradation respectively.",t:['tag-no']},
+  {id:35,cat:'noun',cl:'讀數據的方法',sub:'peak at 到達最高點',cn:'英國犯罪率1999年達到約9%的高峰',en:"Britain's crime rate peaked at 9% or so in 1999.",t:['tag-no']},
+  {id:36,cat:'noun',cl:'讀數據的方法',sub:'versus 相比',cn:'1989年教育支出2.23億，與1994年1.1億相比大幅下降',en:'There was a steep decrease in the spending on education (223 million in 1989 versus 110 million in 1994).',t:['tag-no']},
+  {id:37,cat:'noun',cl:'表示倍數',sub:'doubled 翻倍',cn:'租金佔家庭支出的比例在1974至1998年間翻了一倍多',en:'Rent as a percentage of the household expenditure more than doubled between 1974 and 1998.',t:['tag-no']},
+  {id:38,cat:'noun',cl:'表示倍數',sub:'twice as…as',cn:'1999年電視的受歡迎程度是洗衣機的兩倍',en:'Television was twice as popular as washing machine in 1999.',t:['tag-no']},
+  {id:39,cat:'compare',cl:'表示排列',sub:'rank 排名',cn:'1999年澳大利亞廢物排名第二，僅次於美國',en:'In 1999, Australia ranked second, behind the USA in domestic waste generation.',t:['tag-cp']},
+  {id:40,cat:'compare',cl:'表示排列',sub:'followed by 緊跟',cn:'商業是最受歡迎的學科，其次是體育',en:'Business was the most popular subject area, followed by physical education and sport.',t:['tag-cp']},
+  {id:41,cat:'compare',cl:'表示排列',sub:'outnumber/overtake',cn:'1990年雞肉消耗量超過了羊肉',en:'The consumption of chicken overtook that of lamb in 1990.',t:['tag-cp']},
+  {id:42,cat:'compare',cl:'比較類表達',sub:'相似性',cn:'與……相當（comparable / equivalent / analogous等）',en:'comparable to, equivalent to, parallel to, analogous to, corresponding to',t:['tag-cp']},
+  {id:43,cat:'compare',cl:'比較類表達',sub:'差異性',cn:'與……形成對比（whereas / conversely / unlike等）',en:'in contrast to, as opposed to, unlike, whereas, while, conversely',t:['tag-cp']},
+  {id:44,cat:'time',cl:'讀時間的方法',sub:'throughout 整個期間',cn:'可耕地在整個1980年代急劇減少',en:'Arable land diminished dramatically throughout the 1980s.',t:['tag-ti']},
+  {id:45,cat:'time',cl:'讀時間的方法',sub:'from…to 從……到……',cn:'增長在1995年至2000年間加速',en:'The growth accelerated during the period from 1995 to 2000.',t:['tag-ti']},
+  {id:46,cat:'time',cl:'讀時間的方法',sub:'at the beginning of',cn:'1960年代初期，約三分之一的國家人口是吸煙者',en:"At the beginning of the 1960s, around one third of the country's population were smokers.",t:['tag-ti']},
+  {id:47,cat:'time',cl:'讀時間的方法',sub:'from…onwards 從……開始',cn:'從1970年代開始，出口量經歷了增長期',en:'From the 1970s onwards, the volume of exports underwent a period of growth.',t:['tag-ti']},
+  {id:48,cat:'time',cl:'讀時間的方法',sub:'in a row 連續',cn:'訪客人數連續五年增加',en:'The number of visitors increased for five years in a row.',t:['tag-ti']},
+  {id:49,cat:'connector',cl:'連接詞：轉折',sub:'但是/然而（六個）',cn:'轉折類連接詞（六個）',en:'nevertheless, nonetheless, conversely, on the contrary, by contrast, whereas',t:['tag-cn']},
+  {id:50,cat:'connector',cl:'連接詞：遞進',sub:'此外/另外（五個）',cn:'遞進類連接詞（五個）',en:"moreover, additionally, what's more, besides, in addition to this",t:['tag-cn']},
+  {id:51,cat:'noun',cl:'圖表類名詞',sub:'圖表類型高分替換',cn:'chart/graph/table的高分替換詞（六個）',en:'diagram, illustration, representation, depiction, visualization, presentation',t:['tag-no']},
+];
+
+const S1_TABS=[
+  {k:'all',l:'全部'},{k:'up',l:'↑ 上升'},{k:'down',l:'↓ 下降'},
+  {k:'stable',l:'— 平穩'},{k:'wave',l:'〜 波動'},{k:'compare',l:'⇌ 比較'},
+  {k:'time',l:'⏱ 時間'},{k:'noun',l:'📋 名詞'},{k:'connector',l:'🔗 連接詞'},
+];
+const TAGLABEL={'tag-up':'↑ 上升','tag-dn':'↓ 下降','tag-st':'— 平穩','tag-wv':'〜 波動','tag-cp':'⇌ 比較','tag-ti':'⏱ 時間','tag-no':'📋 名詞','tag-cn':'🔗 連接詞'};
+
+let s1m='read',s1f='all',s1tab='all',s1note=false,s1g={};
+const s1ck=new Set(JSON.parse(localStorage.getItem('s1ck')||'[]'));
+const s1no=JSON.parse(localStorage.getItem('s1no')||'{}');
+
+function s1Init(){
+  document.getElementById('s1tabs').innerHTML=S1_TABS.map(t=>`<button class="s1-tab${t.k==='all'?' active':''}" onclick="s1SetTab('${t.k}',this)">${t.l}</button>`).join('');
+  document.getElementById('s1q').addEventListener('input',s1Render);
+  s1Render();
+}
+function s1SetTab(k,b){s1tab=k;s1g={};document.querySelectorAll('.s1-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');s1Render();}
+function s1Vis(){
+  const q=document.getElementById('s1q').value.trim().toLowerCase();
+  return D1.filter(d=>{
+    if(s1tab!=='all'&&d.cat!==s1tab)return false;
+    if(s1f==='checked'&&!s1ck.has(d.id))return false;
+    if(s1f==='unchecked'&&s1ck.has(d.id))return false;
+    if(q&&!d.cn.toLowerCase().includes(q)&&!d.en.toLowerCase().includes(q)&&!d.sub.toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+function s1Render(){
+  const items=s1Vis();const el=document.getElementById('s1ct');
+  if(!items.length){el.innerHTML='<div class="empty">沒有符合條件的句子 🔍</div>';s1Stat();return;}
+  const g={};items.forEach(d=>{if(!g[d.cl])g[d.cl]=[];g[d.cl].push(d);});
+  let h='';
+  for(const[cl,list]of Object.entries(g)){
+    h+=`<div class="cat-hd"><span class="cat-name">${cl}</span><span class="cat-ct">${list.length}項</span></div>`;
+    list.forEach(d=>{h+=s1Card(d);});
+  }
+  el.innerHTML=h;
+  items.forEach(d=>{
+    document.getElementById(`s1cb${d.id}`)?.addEventListener('change',e=>{
+      if(e.target.checked)s1ck.add(d.id);else s1ck.delete(d.id);
+      localStorage.setItem('s1ck',JSON.stringify([...s1ck]));
+      document.getElementById(`s1cd${d.id}`)?.classList.toggle('ck',e.target.checked);
+    });
+    const ni=document.getElementById(`s1ni${d.id}`);
+    if(ni)ni.addEventListener('input',()=>{s1no[d.id]=ni.value;localStorage.setItem('s1no',JSON.stringify(s1no));});
+  });
+  s1Stat();
+}
+function s1Card(d){
+  const ck=s1ck.has(d.id),gv=s1g[d.id];
+  const scn=s1m==='read'||s1m==='cn2en'||s1m==='fill';
+  const sen=s1m==='read';
+  const ien=s1m==='cn2en'||s1m==='fill';
+  const icn=s1m==='en2cn'||s1m==='fill';
+  let b='';
+  if(scn)b+=`<div class="scn">${esc(d.cn)}</div>`;
+  if(icn){const c=gv===true?'cbg':gv===false?'wbg':'';
+    b+=`<div class="inpwrap"><textarea class="ainp ${c}" id="s1icn${d.id}" rows="2" placeholder="中文..."></textarea>${gv!==undefined?`<span class="rbadge">${gv?'✅':'❌'}</span>`:''}</div>`;
+    if(gv===false)b+=`<div class="reveal show">✦ ${esc(d.cn)}</div>`;}
+  if(sen)b+=`<div class="sen">${esc(d.en)}</div>`;
+  if(ien){const c=gv===true?'cbg':gv===false?'wbg':'';
+    b+=`<div class="inpwrap"><textarea class="ainp ${c}" id="s1ien${d.id}" rows="2" placeholder="英文..."></textarea>${gv!==undefined?`<span class="rbadge">${gv?'✅':'❌'}</span>`:''}</div>`;
+    if(gv===false)b+=`<div class="reveal show">✦ ${esc(d.en)}</div>`;}
+  const tags=d.t.map(t=>`<span class="tag ${t}">${TAGLABEL[t]||t}</span>`).join('');
+  return `<div class="card${ck?' ck':''}" id="s1cd${d.id}">
+    <div class="card-top">
+      <div class="card-cb"><input type="checkbox" id="s1cb${d.id}"${ck?' checked':''}></div>
+      <div class="card-body"><div class="cmeta"><span class="cnum">#${d.id}</span>${tags}<span style="font-size:11px;color:var(--text3);font-style:italic;">${esc(d.sub)}</span></div>${b}</div>
+    </div>
+    <div class="note-area${s1note?' open':''}"><textarea class="note-inp" id="s1ni${d.id}" placeholder="✏️ 筆記...">${esc(s1no[d.id]||'')}</textarea></div>
+  </div>`;
+}
+function s1Stat(){
+  const v=s1Vis();document.getElementById('s1t').textContent=v.length;
+  const done=v.filter(d=>s1g[d.id]!==undefined).length;
+  document.getElementById('s1d').textContent=done;
+  document.getElementById('s1c').textContent=v.filter(d=>s1g[d.id]===true).length;
+  document.getElementById('s1w').textContent=v.filter(d=>s1g[d.id]===false).length;
+  document.getElementById('s1pb').style.width=(v.length?(done/v.length*100):0)+'%';
+}
+function s1Grade(){
+  if(s1m==='read'){alert('請先切換到填空模式！');return;}
+  s1Vis().forEach(d=>{
+    if(s1m==='cn2en'||s1m==='fill'){const e=document.getElementById(`s1ien${d.id}`);if(e&&e.value.trim())s1g[d.id]=norm(e.value)===norm(d.en);}
+    if(s1m==='en2cn'||s1m==='fill'){const e=document.getElementById(`s1icn${d.id}`);if(e&&e.value.trim())s1g[d.id]=norm(e.value)===norm(d.cn);}
+  });s1Render();
+}
+function s1Clear(){s1g={};s1Render();}
+function s1ResetCk(){s1ck.clear();localStorage.setItem('s1ck','[]');s1Render();}
+function s1ToggleNote(){s1note=!s1note;document.getElementById('s1nt').classList.toggle('on',s1note);s1Render();}
+function s1SetMode(m){s1m=m;s1g={};document.querySelectorAll('.mdbtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));s1Render();}
+function s1SetF(btn,f){s1f=f;document.querySelectorAll('[data-f]').forEach(b=>b.classList.toggle('on',b.dataset.f===f));s1Render();}
+
+// ═══════════════════════════════════════════════
+// SECTION 2 DATA
+// ═══════════════════════════════════════════════
+const D2=[
+  {id:'b1',type:'vocab',badge:'bv',tl:'詞彙配對',cat:'vocab',
+   title:'提分詞彙：看中文填英文',sub:'反饋筆記 — 必背詞彙',
+   tip:'這些詞彙來自你的作文反饋，熟練後能有效提升分數。',
+   qs:[
+    {id:'b1q1',p:'佔了…（佔比/比例）<span style="color:var(--text3);font-size:12px;">→ 填兩個同義詞</span>',a:'account for / responsible for',acc:['account for','responsible for'],h:'account for / responsible for'},
+    {id:'b1q2',p:'緊隨其後的是…',a:'followed closely by',acc:['followed closely by'],h:'followed closely by'},
+    {id:'b1q3',p:'相比之下（對比詞）<span style="color:var(--text3);font-size:12px;">→ 填兩個</span>',a:'by contrast / in contrast',acc:['by contrast','in contrast'],h:'by contrast / in contrast'},
+    {id:'b1q4',p:'然而／儘管…而…（對比連接詞）<span style="color:var(--text3);font-size:12px;">→ 填兩個</span>',a:'while / whereas',acc:['while','whereas'],h:'while / whereas'},
+    {id:'b1q5',p:'驚人的（用於描述極高的數據）',a:'staggering',acc:['staggering'],h:'staggering'},
+    {id:'b1q6',p:'主要的、首要的（形容詞）<span style="color:var(--text3);font-size:12px;">→ 填兩個</span>',a:'primary / leading',acc:['primary','leading'],h:'primary / leading'},
+    {id:'b1q7',p:'最輕微的、受影響最小的（形容詞）<span style="color:var(--text3);font-size:12px;">→ 填兩個</span>',a:'minimal / least affected',acc:['minimal','least affected'],h:'minimal / least affected'},
+  ]},
+  {id:'b2',type:'paraphrase',badge:'bp',tl:'同義替換',cat:'paraphrase',
+   title:'同義替換練習（Paraphrasing）',sub:'反饋筆記 — 避免重複用詞',
+   tip:'Task 1 中避免重複使用同一個詞，替換可以讓文章更豐富自然。',
+   qs:[
+    {id:'b2q1',p:'替換 <span class="hl">smokers</span>：寫出兩種替換說法',a:'the smoking population / individuals who smoked',acc:['smoking population','individuals who smoked','percentage of individuals'],h:'the smoking population / the percentage of individuals who smoked'},
+    {id:'b2q2',p:'替換 <span class="hl">male</span> / <span class="hl">female</span>：寫出三種替換說法',a:'men/women / both genders / their male counterparts',acc:['men','women','both genders','male counterparts'],h:'men/women, both genders, their male counterparts'},
+    {id:'b2q3',p:'替換 <span class="hl">increase</span>（上升）：寫出四個高分動詞',a:'rise / grow / climb / reach a peak',acc:['rise','grow','climb','reach a peak'],h:'rise, grow, climb, reach a peak'},
+    {id:'b2q4',p:'替換 <span class="hl">statistics / numbers</span>（數據）：寫出三個替換詞',a:'figures / data / the recorded numbers',acc:['figures','data','numbers'],h:'figures / data / the recorded numbers'},
+    {id:'b2q5',p:'表示「數據接近」：寫出三個高分說法',a:'marginal difference / almost identical / closely mirrored each other',acc:['marginal difference','almost identical','closely mirrored'],h:'marginal difference / almost identical / closely mirrored each other'},
+    {id:'b2q6',p:'表示「時間跨度」：寫出三個高分說法',a:'over the 30-year period / throughout the duration shown / by the end of the timeframe',acc:['over the','throughout','duration','timeframe'],h:'Over the 30-year period / Throughout the duration shown / By the end of the timeframe'},
+  ]},
+  {id:'b3',type:'transform',badge:'bt',tl:'句型轉換',cat:'transform',
+   title:'動詞結構 ↔ 名詞結構',sub:'反饋筆記 — 兩種句型需熟練掌握',
+   tip:'描述數據時，動詞結構和名詞結構要能互換，避免句式單調。',
+   qs:[
+    {id:'b3q1',p:'把以下動詞句改成<strong>名詞結構</strong>：<br><span class="hl">The number of smokers increased significantly.</span>',a:'There was a significant increase in the number of smokers.',acc:['significant increase','number of smokers'],h:'There was a significant increase in the number of smokers.'},
+    {id:'b3q2',p:'把以下名詞句改成<strong>動詞結構</strong>：<br><span class="hl">There was a dramatic decline in car ownership.</span>',a:'Car ownership declined dramatically.',acc:['declined dramatically','car ownership declined'],h:'Car ownership declined dramatically.'},
+    {id:'b3q3',p:'把以下動詞句改成<strong>名詞結構</strong>：<br><span class="hl">Unemployment rose sharply in 1995.</span>',a:'There was a sharp rise in unemployment in 1995.',acc:['sharp rise','unemployment'],h:'There was a sharp rise in unemployment in 1995.'},
+    {id:'b3q4',p:'把以下名詞句改成<strong>動詞結構</strong>：<br><span class="hl">There was a steady increase in house prices between 1990 and 2000.</span>',a:'House prices increased steadily between 1990 and 2000.',acc:['increased steadily','house prices'],h:'House prices increased steadily between 1990 and 2000.'},
+  ]},
+  {id:'b4',type:'rewrite',badge:'br',tl:'句子改寫',cat:'rewrite',
+   title:'低階句 → 高階句（分詞作狀語）',sub:'反饋筆記 — 使用 ", V-ing" 結構提升句子層次',
+   tip:'把兩個短句合併成一個高階句。結構：主句, V-ing 補充說明。這是來自你作文反饋中特別強調的語法點。',
+   qs:[
+    {id:'b4q1',p:'合併以下兩句（使用 <span class="hl">, V-ing</span> 結構）：<br>"The rate fell to 28%. It was the lowest point."',a:'The rate fell to 28%, representing the lowest point in the recorded history.',acc:['fell to 28%','representing','lowest point'],h:'The rate fell to 28%, representing the lowest point in the recorded history.'},
+    {id:'b4q2',p:'合併以下兩句（使用 <span class="hl">, V-ing</span> 結構）：<br>"Sales rose to 50 million. This showed a 20% increase."',a:'Sales rose to 50 million, showing a 20% increase.',acc:['rose to 50 million','showing','increase'],h:'Sales rose to 50 million, showing a 20% increase.'},
+    {id:'b4q3',p:'合併以下兩句（使用 <span class="hl">, V-ing</span> 結構）：<br>"GDP reached 5 trillion. It accounted for the highest figure."',a:'GDP reached 5 trillion, accounting for the highest figure.',acc:['reached 5 trillion','accounting','highest'],h:'GDP reached 5 trillion, accounting for the highest figure.'},
+    {id:'b4q4',p:'合併以下兩句（使用 <span class="hl">, dropping to</span> 結構）：<br>"The unemployment rate was 9% in 1990. It went down to 6% in 1995."',a:'The unemployment rate was 9% in 1990, dropping to 6% in 1995.',acc:['was 9%','dropping to','1995'],h:'The unemployment rate was 9% in 1990, dropping to 6% in 1995.'},
+  ]},
+  {id:'b5',type:'grammar',badge:'bg',tl:'語法結構',cat:'grammar',
+   title:'指代詞 & 趨勢動詞語法練習',sub:'反饋筆記 — the former / the latter 與動詞時態',
+   tip:'the former（前者）和 the latter（後者）可以避免重複使用 male/female，是提分的好工具。',
+   qs:[
+    {id:'b5q1',p:'用 <span class="hl">the former</span> / <span class="hl">the latter</span> 改寫，表達「前者高於後者」：<br>"Males accounted for 60%. Females accounted for 40%."',a:'...the former were significantly higher than the latter.',acc:['the former','the latter'],h:'...the former were significantly higher than the latter.'},
+    {id:'b5q2',p:'填入最適合的詞（表示「在整個……期間」）：<br>"___ the 30-year period, the figure rose from 10% to 45%."',a:'Over / Throughout',acc:['over','throughout'],h:'Over / Throughout'},
+    {id:'b5q3',p:'把趨勢動詞改成<strong>過去式</strong>：<br>rise → ? / fall → ? / increase → ? / decline → ?',a:'rose / fell / increased / declined',acc:['rose','fell','increased','declined'],h:'rose / fell / increased / declined'},
+    {id:'b5q4',p:'動詞結構中「上升」的<strong>名詞表達</strong>是？（兩個）',a:'a rise / an upward trend',acc:['rise','upward trend'],h:'a rise / an upward trend'},
+    {id:'b5q5',p:'動詞結構中「下降」的<strong>名詞表達</strong>是？（兩個）',a:'a decline / a reduction',acc:['decline','reduction'],h:'a decline / a reduction'},
+    {id:'b5q6',p:'動詞結構中「穩定」的<strong>名詞表達</strong>是？',a:'a period of stability',acc:['period of stability','stability'],h:'a period of stability'},
+  ]},
+];
+
+let s2f='all',s2ans={},s2g={};
+
+function s2Blocks(){return D2.filter(b=>s2f==='all'||b.cat===s2f);}
+function s2Render(){
+  const bl=s2Blocks();const el=document.getElementById('s2ct');
+  let h=`<div class="s2-intro"><h3>📝 寫作反饋練習</h3><p>這些練習來自你的雅思作文反饋筆記，針對性強化提分詞彙、同義替換、句型轉換和語法結構。<strong>批改採關鍵詞比對</strong>，只要包含關鍵詞即視為正確。</p></div>`;
+  bl.forEach(b=>{
+    const bc=b.badge;
+    let qh='';
+    b.qs.forEach(q=>{
+      const gv=s2g[q.id];
+      const ic=gv===true?'cbg':gv===false?'wbg':'';
+      const fc=gv===true?'okfb':'nofb';
+      const fs=gv!==undefined?'show':'';
+      qh+=`<div class="qi">
+        <div class="qi-top"><div class="qprompt">${q.p}</div></div>
+        <div class="qi-inp"><textarea class="qinp ${ic}" id="s2i${q.id}" rows="2" placeholder="在這裡輸入答案..."></textarea></div>
+        <div class="qfb ${fc} ${fs}">${gv===true?'✅ 答對了！':gv===false?`❌ 參考答案：<span class="fba">${esc(q.h)}</span>`:''}</div>
+      </div>`;
+    });
+    h+=`<div class="exblock"><div class="exhd">
+      <span class="exbadge ${bc}">${b.tl}</span>
+      <span class="extitle">${b.title}</span>
+      <span class="exsub">${b.sub}</span>
+    </div><div class="exbody">
+      ${b.tip?`<div class="tipbox">💡 <strong>學習重點：</strong>${b.tip}</div>`:''}
+      ${qh}
+    </div></div>`;
+  });
+  el.innerHTML=h;
+  bl.forEach(b=>b.qs.forEach(q=>{
+    const i=document.getElementById(`s2i${q.id}`);
+    if(i){if(s2ans[q.id])i.value=s2ans[q.id];i.addEventListener('input',()=>{s2ans[q.id]=i.value;});}
+  }));
+  s2Stat();
+}
+function s2Stat(){
+  const bl=s2Blocks();let t=0,c=0,w=0;
+  bl.forEach(b=>b.qs.forEach(q=>{t++;if(s2g[q.id]===true)c++;if(s2g[q.id]===false)w++;}));
+  document.getElementById('s2t').textContent=t;
+  document.getElementById('s2c').textContent=c;
+  document.getElementById('s2w').textContent=w;
+  document.getElementById('s2pb').style.width=(t?((c+w)/t*100):0)+'%';
+}
+function s2Grade(){
+  s2Blocks().forEach(b=>b.qs.forEach(q=>{
+    const i=document.getElementById(`s2i${q.id}`);
+    if(i&&i.value.trim()){
+      const u=norm(i.value);
+      s2g[q.id]=q.acc.some(a=>u.includes(norm(a)));
+      s2ans[q.id]=i.value;
+    }
+  }));
+  s2Render();
+}
+function s2Clear(){s2ans={};s2g={};s2Render();}
+function s2SetF(btn,f){
+  s2f=f;
+  document.querySelectorAll('.s2-fbtn').forEach(b=>b.classList.toggle('active',b.dataset.f===f));
+  s2Render();
+}
+
+// ── INIT ──
+s1Init();
+s2Render();
+</script>
+</body>
+</html>
