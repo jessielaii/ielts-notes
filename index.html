@@ -76,6 +76,9 @@ body{font-family:'Noto Serif TC',serif;background:var(--bg);color:var(--text);mi
 .tag-ti{background:#f0f4e6;color:#5a7a1a;}
 .tag-no{background:#f4f0e0;color:#7a5a1a;}
 .tag-cn{background:#e6eff8;color:#3a5a7a;}
+.tag-ln{background:#e8eef8;color:#2a4a7a;}
+.tag-pr{background:#fef3e0;color:#7a5000;}
+.tag-br{background:#e8f4ec;color:#1a6b3a;}
 .scn{font-size:13.5px;color:var(--text);line-height:1.6;font-weight:600;}
 .sen{font-family:'DM Mono',monospace;font-size:12.5px;color:var(--accent);line-height:1.5;font-style:italic;}
 .inpwrap{display:flex;gap:5px;align-items:flex-start;}
@@ -144,6 +147,7 @@ body{font-family:'Noto Serif TC',serif;background:var(--bg);color:var(--text);mi
   <div class="main-tabs-row">
     <button class="main-tab-btn active" onclick="switchMain('s1')">✍️ 表達句型練習</button>
     <button class="main-tab-btn" onclick="switchMain('s2')">💡 寫作反饋練習</button>
+    <button class="main-tab-btn" onclick="switchMain('s3')">📊 圖表詞組</button>
   </div>
 </div>
 
@@ -197,16 +201,48 @@ body{font-family:'Noto Serif TC',serif;background:var(--bg);color:var(--text);mi
   <div class="s2-wrap" id="s2ct"></div>
 </div>
 
+<!-- ══ SECTION 3 ══ -->
+<div id="main-s3" class="section-page">
+  <div class="s1-sub-bar" id="s3tabs"></div>
+  <div class="stats-bar">
+    <span class="stat">已完成 <strong id="s3d">0</strong>/<strong id="s3t">0</strong></span>
+    <span class="stat c">✓ 正確 <strong id="s3c">0</strong></span>
+    <span class="stat w">✗ 錯誤 <strong id="s3w">0</strong></span>
+  </div>
+  <div class="pbar"><div class="pbfill" id="s3pb"></div></div>
+  <div class="toolbar">
+    <div class="sw"><span class="si">🔍</span><input type="text" id="s3q" placeholder="搜尋..."></div>
+    <button class="btn pri" onclick="s3Grade()">✓ 批改</button>
+    <button class="btn danger" onclick="s3Clear()">清除</button>
+    <button class="btn" onclick="s3ResetCk()">重置勾選</button>
+    <button class="btn" id="s3nt" onclick="s3ToggleNote()">📌 筆記</button>
+    <span class="tlabel">模式：</span>
+    <span id="s3md">
+      <button class="mdbtn active" data-m="read" onclick="s3SetMode('read')">📖 閱讀</button>
+      <button class="mdbtn" data-m="cn2en" onclick="s3SetMode('cn2en')">👁 看中文填英文</button>
+      <button class="mdbtn" data-m="en2cn" onclick="s3SetMode('en2cn')">👁 看英文填中文</button>
+      <button class="mdbtn" data-m="fill" onclick="s3SetMode('fill')">✏️ 全填</button>
+    </span>
+    <span class="tlabel">篩選：</span>
+    <span id="s3fl">
+      <button class="btn on" data-f="all" onclick="s3SetF(this,'all')">全部</button>
+      <button class="btn" data-f="checked" onclick="s3SetF(this,'checked')">已勾選</button>
+      <button class="btn" data-f="unchecked" onclick="s3SetF(this,'unchecked')">未勾選</button>
+    </span>
+  </div>
+  <div id="s3ct"></div>
+</div>
+
 <script>
 // ═══════════ SHARED ═══════════
 function norm(s){return String(s).toLowerCase().replace(/[^\w\u4e00-\u9fff]/g,'').trim();}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function switchMain(id){
-  ['s1','s2'].forEach(k=>{
+  ['s1','s2','s3'].forEach(k=>{
     document.getElementById('main-'+k).classList.toggle('active',k===id);
   });
   document.querySelectorAll('.main-tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active',(i===0&&id==='s1')||(i===1&&id==='s2'));
+    b.classList.toggle('active',(i===0&&id==='s1')||(i===1&&id==='s2')||(i===2&&id==='s3'));
   });
 }
 
@@ -265,6 +301,55 @@ const D1=[
   {id:49,cat:'connector',cl:'連接詞：轉折',sub:'但是/然而（六個）',cn:'轉折類連接詞（六個）',en:'nevertheless, nonetheless, conversely, on the contrary, by contrast, whereas',t:['tag-cn']},
   {id:50,cat:'connector',cl:'連接詞：遞進',sub:'此外/另外（五個）',cn:'遞進類連接詞（五個）',en:"moreover, additionally, what's more, besides, in addition to this",t:['tag-cn']},
   {id:51,cat:'noun',cl:'圖表類名詞',sub:'圖表類型高分替換',cn:'chart/graph/table的高分替換詞（六個）',en:'diagram, illustration, representation, depiction, visualization, presentation',t:['tag-no']},
+
+  // ── 折線圖 ──
+  {id:52,cat:'chart',cl:'折線圖：趨勢描述',sub:'notable upward trend',cn:'描述一個明顯的上升趨勢',en:'a notable upward trend',t:['tag-ln','tag-up']},
+  {id:53,cat:'chart',cl:'折線圖：趨勢描述',sub:'the percentage of those',cn:'那些人/事物的百分比（折線圖引導主語）',en:'the percentage of those',t:['tag-ln']},
+  {id:54,cat:'chart',cl:'折線圖：趨勢描述',sub:'contrasting trend',cn:'呈現完全相反的趨勢（demonstrated）',en:'demonstrated a completely contrasting trend',t:['tag-ln']},
+  {id:55,cat:'chart',cl:'折線圖：趨勢描述',sub:'the former reached a peak of',cn:'前者達到……的峰值（用the former指代）',en:'the former reached a peak of',t:['tag-ln']},
+  {id:56,cat:'chart',cl:'折線圖：連接詞',sub:'after which',cn:'在此之後（承接下文趨勢轉折）',en:'after which',t:['tag-ln']},
+  {id:57,cat:'chart',cl:'折線圖：趨勢描述',sub:'experienced',cn:'（某事物）經歷了（某種趨勢變化）',en:'experienced',t:['tag-ln']},
+  {id:58,cat:'chart',cl:'折線圖：數據表達',sub:'from X in year to Y in year',cn:'從1918年的22%上升至2001年的69%',en:'from 22% in 1918 to 69% in 2001',t:['tag-ln','tag-ti']},
+  {id:59,cat:'chart',cl:'折線圖：結尾表達',sub:'concluded at',cn:'最終停在（某數值）——used to end a trend description',en:'concluded at',t:['tag-ln']},
+  {id:60,cat:'chart',cl:'折線圖：開頭句型',sub:'a diverse array of statistics',cn:'提及多樣化的數據（開頭泛指）',en:'a diverse array of statistics',t:['tag-ln']},
+  {id:61,cat:'chart',cl:'折線圖：時間表達',sub:'throughout the period from … to …',cn:'在整個1918年至2000年期間',en:'throughout the period from 1918 to 2000',t:['tag-ln','tag-ti']},
+  {id:62,cat:'chart',cl:'折線圖：趨勢描述',sub:'intersected',cn:'（兩條折線）在某點交叉',en:'intersected',t:['tag-ln']},
+
+  // ── 流程圖 ──
+  {id:63,cat:'chart',cl:'流程圖：開頭句型',sub:'illustrates',cn:'（圖表）呈現了……（用illustrates開頭）',en:'illustrates',t:['tag-pr']},
+  {id:64,cat:'chart',cl:'流程圖：開頭句型',sub:'consists of several stages',cn:'回收過程由幾個步驟組成',en:'the recycling process consists of several stages',t:['tag-pr']},
+  {id:65,cat:'chart',cl:'流程圖：步驟連接',sub:'beginning with',cn:'從……開始（流程第一步）',en:'beginning with',t:['tag-pr']},
+  {id:66,cat:'chart',cl:'流程圖：步驟連接',sub:'ending with',cn:'最終結束於……（流程末尾）',en:'ending with',t:['tag-pr']},
+  {id:67,cat:'chart',cl:'流程圖：整體描述',sub:'a continuous cycle',cn:'（整個流程是）一個循環過程',en:'a continuous cycle',t:['tag-pr']},
+  {id:68,cat:'chart',cl:'流程圖：步驟描述',sub:'place their used plastic bottles',cn:'把用過的塑膠瓶放置（進回收桶）',en:'place their used plastic bottles',t:['tag-pr']},
+  {id:69,cat:'chart',cl:'流程圖：步驟描述',sub:'recycling bins located on the street',cn:'放置於街道上的回收桶',en:'recycling bins located on the street',t:['tag-pr']},
+  {id:70,cat:'chart',cl:'流程圖：步驟描述',sub:'are then collected by',cn:'然後被回收車收集（被動語態）',en:'are then collected by recycling trucks',t:['tag-pr']},
+  {id:71,cat:'chart',cl:'流程圖：步驟描述',sub:'sort into recyclable / non-recyclable',cn:'將瓶子分類為可回收和不可回收',en:'sort the bottles into recyclable and non-recyclable categories',t:['tag-pr']},
+  {id:72,cat:'chart',cl:'流程圖：步驟連接',sub:'After the sorting stage',cn:'在分類階段之後（承接下一步）',en:'After the sorting stage',t:['tag-pr']},
+  {id:73,cat:'chart',cl:'流程圖：步驟描述',sub:'go through the processing steps',cn:'經過（一系列）加工步驟',en:'go through the processing steps',t:['tag-pr']},
+  {id:74,cat:'chart',cl:'流程圖：步驟描述',sub:'compressed into large blocks',cn:'被壓縮成大塊（被動式）',en:'compressed into large blocks',t:['tag-pr']},
+  {id:75,cat:'chart',cl:'流程圖：步驟連接',sub:'before being crushed',cn:'在被壓碎之前（before being V-ed 結構）',en:'before being crushed',t:['tag-pr']},
+  {id:76,cat:'chart',cl:'流程圖：步驟描述',sub:'cut into small plastic pieces by machines',cn:'被機器切成小塑膠片',en:'cut into small plastic pieces by machines',t:['tag-pr']},
+  {id:77,cat:'chart',cl:'流程圖：名詞詞組',sub:'plastic fragments',cn:'塑膠碎片（高分替換詞）',en:'plastic fragments',t:['tag-pr']},
+  {id:78,cat:'chart',cl:'流程圖：步驟描述',sub:'washed thoroughly',cn:'被徹底清洗（步驟描述）',en:'washed thoroughly',t:['tag-pr']},
+  {id:79,cat:'chart',cl:'流程圖：步驟描述',sub:'in a special machine to produce plastic pellets',cn:'在特殊機器中製成塑膠顆粒',en:'in a special machine to produce plastic pellets',t:['tag-pr']},
+  {id:80,cat:'chart',cl:'流程圖：步驟連接',sub:'In the final stage of processing',cn:'在加工的最後階段（收尾句型）',en:'In the final stage of processing',t:['tag-pr']},
+  {id:81,cat:'chart',cl:'流程圖：步驟描述',sub:'melted and transformed into raw materials',cn:'被熔化並轉化為原材料（最終步驟）',en:'are melted and transformed into raw materials',t:['tag-pr']},
+
+  // ── 長條圖 ──
+  {id:82,cat:'chart',cl:'長條圖：開頭句型',sub:'illustrates the volume of goods transported',cn:'長條圖呈現了貨物運輸量（開頭句型）',en:'The bar chart illustrates the volume of goods transported',t:['tag-br']},
+  {id:83,cat:'chart',cl:'長條圖：開頭句型',sub:'using four different modes of transport',cn:'使用四種不同的運輸方式',en:'using four different modes of transport',t:['tag-br']},
+  {id:84,cat:'chart',cl:'長條圖：整體趨勢',sub:'experienced an upward trend over the period',cn:'貨物運輸總量在28年期間呈現上升趨勢',en:'the total amount of cargo transported experienced an upward trend over the 28-year period',t:['tag-br','tag-up']},
+  {id:85,cat:'chart',cl:'長條圖：整體趨勢',sub:'remained consistently the most dominant',cn:'在整個時期內始終是最主要的運輸方式',en:'remained consistently the most dominant method throughout the timeframe',t:['tag-br']},
+  {id:86,cat:'chart',cl:'長條圖：對比描述',sub:'while pipelines were the least utilized',cn:'而管道是使用最少的方式（while引導對比）',en:'while pipelines were the least utilized',t:['tag-br']},
+  {id:87,cat:'chart',cl:'長條圖：分析句型',sub:'In terms of the individual categories',cn:'就各個類別而言（分述各類別的引導語）',en:'In terms of the individual categories',t:['tag-br']},
+  {id:88,cat:'chart',cl:'長條圖：趨勢描述',sub:'saw the most significant growth',cn:'出現了最顯著的增長（用saw表達）',en:'saw the most significant growth',t:['tag-br','tag-up']},
+  {id:89,cat:'chart',cl:'長條圖：趨勢描述',sub:'climbing from approximately 70 million tonnes',cn:'從大約七千萬噸攀升（climbing from分詞結構）',en:'climbing from approximately 70 million tonnes',t:['tag-br','tag-up']},
+  {id:90,cat:'chart',cl:'長條圖：趨勢描述',sub:'also grew substantially, rising by over 20 million tonnes',cn:'也大幅增長，增加超過兩千萬噸，成為第二受歡迎的方式',en:'also grew substantially, rising by over 20 million tonnes to finish as the second most popular method',t:['tag-br','tag-up']},
+  {id:91,cat:'chart',cl:'長條圖：對比句型',sub:'By contrast, showed much more modest changes',cn:'相比之下，變化幅度更為温和（By contrast引導）',en:'By contrast, showed much more modest changes',t:['tag-br']},
+  {id:92,cat:'chart',cl:'長條圖：波動描述',sub:'fluctuated around … before ending slightly higher at',cn:'在四千萬噸左右波動，最終略微上升至4100萬噸',en:'fluctuated around 40 million tonnes before ending slightly higher at 41 million tonnes',t:['tag-br','tag-wv']},
+  {id:93,cat:'chart',cl:'長條圖：讓步句型',sub:'despite a slight decline in the middle years',cn:'儘管中間幾年有所下降（despite讓步結構）',en:'despite a slight decline in the middle years',t:['tag-br']},
+  {id:94,cat:'chart',cl:'長條圖：趨勢描述',sub:'rose marginally from … to … at the end of the period',cn:'數值從最初的500萬噸小幅上升至期末的約2200萬噸',en:'saw their figures rise marginally from an initial 5 million tonnes to around 22 million tonnes at the end of the period',t:['tag-br','tag-up']},
 ];
 
 const S1_TABS=[
@@ -272,7 +357,7 @@ const S1_TABS=[
   {k:'stable',l:'— 平穩'},{k:'wave',l:'〜 波動'},{k:'compare',l:'⇌ 比較'},
   {k:'time',l:'⏱ 時間'},{k:'noun',l:'📋 名詞'},{k:'connector',l:'🔗 連接詞'},
 ];
-const TAGLABEL={'tag-up':'↑ 上升','tag-dn':'↓ 下降','tag-st':'— 平穩','tag-wv':'〜 波動','tag-cp':'⇌ 比較','tag-ti':'⏱ 時間','tag-no':'📋 名詞','tag-cn':'🔗 連接詞'};
+const TAGLABEL={'tag-up':'↑ 上升','tag-dn':'↓ 下降','tag-st':'— 平穩','tag-wv':'〜 波動','tag-cp':'⇌ 比較','tag-ti':'⏱ 時間','tag-no':'📋 名詞','tag-cn':'🔗 連接詞','tag-ln':'📈 折線圖','tag-pr':'🔄 流程圖','tag-br':'📊 長條圖'};
 
 let s1m='read',s1f='all',s1tab='all',s1note=false,s1g={};
 const s1ck=new Set(JSON.parse(localStorage.getItem('s1ck')||'[]'));
@@ -287,6 +372,7 @@ function s1SetTab(k,b){s1tab=k;s1g={};document.querySelectorAll('.s1-tab').forEa
 function s1Vis(){
   const q=document.getElementById('s1q').value.trim().toLowerCase();
   return D1.filter(d=>{
+    if(d.cat==='chart')return false;
     if(s1tab!=='all'&&d.cat!==s1tab)return false;
     if(s1f==='checked'&&!s1ck.has(d.id))return false;
     if(s1f==='unchecked'&&s1ck.has(d.id))return false;
@@ -480,9 +566,118 @@ function s2SetF(btn,f){
   s2Render();
 }
 
+// ═══════════════════════════════════════════════
+// SECTION 3 — 圖表詞組
+// ═══════════════════════════════════════════════
+const S3_TABS=[
+  {k:'all',l:'全部'},{k:'line',l:'📈 折線圖'},{k:'process',l:'🔄 流程圖'},{k:'bar',l:'📊 長條圖'},
+];
+function s3ChartType(d){
+  if(d.cl.startsWith('折線圖'))return 'line';
+  if(d.cl.startsWith('流程圖'))return 'process';
+  if(d.cl.startsWith('長條圖'))return 'bar';
+  return 'other';
+}
+let s3m='read',s3tab='all',s3note=false,s3g={},s3f='all';
+function s3Init(){
+  document.getElementById('s3tabs').innerHTML=S3_TABS.map(t=>`<button class="s1-tab${t.k==='all'?' active':''}" onclick="s3SetTab('${t.k}',this)">${t.l}</button>`).join('');
+  document.getElementById('s3q').addEventListener('input',s3Render);
+  s3Render();
+}
+function s3SetTab(k,b){
+  s3tab=k;s3g={};
+  document.querySelectorAll('#s3tabs .s1-tab').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');s3Render();
+}
+function s3Vis(){
+  const q=document.getElementById('s3q').value.trim().toLowerCase();
+  return D1.filter(d=>{
+    if(d.cat!=='chart')return false;
+    if(s3tab!=='all'&&s3ChartType(d)!==s3tab)return false;
+    if(s3f==='checked'&&!s1ck.has(d.id))return false;
+    if(s3f==='unchecked'&&s1ck.has(d.id))return false;
+    if(q&&!d.cn.toLowerCase().includes(q)&&!d.en.toLowerCase().includes(q)&&!d.sub.toLowerCase().includes(q))return false;
+    return true;
+  });
+}
+function s3Render(){
+  const items=s3Vis();const el=document.getElementById('s3ct');
+  if(!items.length){el.innerHTML='<div class="empty">沒有符合條件的句子 🔍</div>';s3Stat();return;}
+  const g={};items.forEach(d=>{if(!g[d.cl])g[d.cl]=[];g[d.cl].push(d);});
+  let h='';
+  for(const[cl,list]of Object.entries(g)){
+    h+=`<div class="cat-hd"><span class="cat-name">${cl}</span><span class="cat-ct">${list.length}項</span></div>`;
+    list.forEach(d=>{h+=s3Card(d);});
+  }
+  el.innerHTML=h;
+  items.forEach(d=>{
+    document.getElementById(`s3cb${d.id}`)?.addEventListener('change',e=>{
+      if(e.target.checked)s1ck.add(d.id);else s1ck.delete(d.id);
+      localStorage.setItem('s1ck',JSON.stringify([...s1ck]));
+      document.getElementById(`s3cd${d.id}`)?.classList.toggle('ck',e.target.checked);
+    });
+    const ni=document.getElementById(`s3ni${d.id}`);
+    if(ni)ni.addEventListener('input',()=>{s1no[d.id]=ni.value;localStorage.setItem('s1no',JSON.stringify(s1no));});
+  });
+  s3Stat();
+}
+function s3Card(d){
+  const ck=s1ck.has(d.id),gv=s3g[d.id];
+  const scn=s3m==='read'||s3m==='cn2en'||s3m==='fill';
+  const sen=s3m==='read';
+  const ien=s3m==='cn2en'||s3m==='fill';
+  const icn=s3m==='en2cn'||s3m==='fill';
+  let b='';
+  if(scn)b+=`<div class="scn">${esc(d.cn)}</div>`;
+  if(icn){const c=gv===true?'cbg':gv===false?'wbg':'';
+    b+=`<div class="inpwrap"><textarea class="ainp ${c}" id="s3icn${d.id}" rows="2" placeholder="中文..."></textarea>${gv!==undefined?`<span class="rbadge">${gv?'✅':'❌'}</span>`:''}</div>`;
+    if(gv===false)b+=`<div class="reveal show">✦ ${esc(d.cn)}</div>`;}
+  if(sen)b+=`<div class="sen">${esc(d.en)}</div>`;
+  if(ien){const c=gv===true?'cbg':gv===false?'wbg':'';
+    b+=`<div class="inpwrap"><textarea class="ainp ${c}" id="s3ien${d.id}" rows="2" placeholder="英文..."></textarea>${gv!==undefined?`<span class="rbadge">${gv?'✅':'❌'}</span>`:''}</div>`;
+    if(gv===false)b+=`<div class="reveal show">✦ ${esc(d.en)}</div>`;}
+  const tags=d.t.map(t=>`<span class="tag ${t}">${TAGLABEL[t]||t}</span>`).join('');
+  return `<div class="card${ck?' ck':''}" id="s3cd${d.id}">
+    <div class="card-top">
+      <div class="card-cb"><input type="checkbox" id="s3cb${d.id}"${ck?' checked':''}></div>
+      <div class="card-body"><div class="cmeta"><span class="cnum">#${d.id}</span>${tags}<span style="font-size:11px;color:var(--text3);font-style:italic;">${esc(d.sub)}</span></div>${b}</div>
+    </div>
+    <div class="note-area${s3note?' open':''}"><textarea class="note-inp" id="s3ni${d.id}" placeholder="✏️ 筆記...">${esc(s1no[d.id]||'')}</textarea></div>
+  </div>`;
+}
+function s3Stat(){
+  const v=s3Vis();document.getElementById('s3t').textContent=v.length;
+  const done=v.filter(d=>s3g[d.id]!==undefined).length;
+  document.getElementById('s3d').textContent=done;
+  document.getElementById('s3c').textContent=v.filter(d=>s3g[d.id]===true).length;
+  document.getElementById('s3w').textContent=v.filter(d=>s3g[d.id]===false).length;
+  document.getElementById('s3pb').style.width=(v.length?(done/v.length*100):0)+'%';
+}
+function s3Grade(){
+  if(s3m==='read'){alert('請先切換到填空模式！');return;}
+  s3Vis().forEach(d=>{
+    if(s3m==='cn2en'||s3m==='fill'){const e=document.getElementById(`s3ien${d.id}`);if(e&&e.value.trim())s3g[d.id]=norm(e.value)===norm(d.en);}
+    if(s3m==='en2cn'||s3m==='fill'){const e=document.getElementById(`s3icn${d.id}`);if(e&&e.value.trim())s3g[d.id]=norm(e.value)===norm(d.cn);}
+  });s3Render();
+}
+function s3Clear(){s3g={};s3Render();}
+function s3ResetCk(){s1ck.clear();localStorage.setItem('s1ck','[]');s3Render();}
+function s3ToggleNote(){s3note=!s3note;document.getElementById('s3nt').classList.toggle('on',s3note);s3Render();}
+function s3SetMode(m){
+  s3m=m;s3g={};
+  document.querySelectorAll('#s3md .mdbtn').forEach(b=>b.classList.toggle('active',b.dataset.m===m));
+  s3Render();
+}
+function s3SetF(btn,f){
+  s3f=f;
+  document.querySelectorAll('#s3fl [data-f]').forEach(b=>b.classList.toggle('on',b.dataset.f===f));
+  s3Render();
+}
+
 // ── INIT ──
 s1Init();
 s2Render();
+s3Init();
 </script>
 </body>
 </html>
